@@ -1,0 +1,118 @@
+setDefaultTab("Tools")
+-- CONFIGURAÇÃO
+local macroName = "EVENTOS"  -- Nome do botão/ícone
+local macroDelay = 250  -- Intervalo da macro
+
+-- OUTFIT DO ÍCONE
+local outfit = {
+  type = 356, 
+  head = 94,
+  body = 94,
+  legs = 94,
+  feet = 94
+}
+
+-- INTERFACE: CAIXINHA PRA DEFINIR PERFIL FORA DE EVENTO
+setDefaultTab("tools")
+UI.Label("CAVE FORA DO HORARIO DE EVENTO:")
+storage.idleProfile = storage.idleProfile or "AFK"
+UI.TextEdit(storage.idleProfile or "", function(widget, text)
+  storage.idleProfile = text
+end)
+
+-- HORÁRIOS DOS EVENTOS / CLICKUPs
+local profileSchedule = {
+  ["02:40"] = "evento", ["03:05"] = "Saida_evento",
+  ["03:00"] = "evento", ["03:25"] = "Saida_evento",
+  ["05:40"] = "evento", ["06:05"] = "Saida_evento",
+  ["07:00"] = "evento", ["07:25"] = "Saida_evento",
+  ["08:40"] = "evento", ["09:05"] = "Saida_evento",
+  ["10:00"] = "evento", ["10:25"] = "Saida_evento",
+  ["11:40"] = "evento", ["12:25"] = "Saida_evento",
+  ["13:40"] = "evento", ["14:05"] = "Saida_evento",
+  ["15:00"] = "evento", ["15:25"] = "Saida_evento",
+  ["15:40"] = "evento", ["16:05"] = "Saida_evento",
+  ["17:00"] = "evento", ["17:25"] = "Saida_evento",
+  ["19:40"] = "evento", ["19:59"] = "Saida_evento",
+  ["20:00"] = "evento", ["20:25"] = "Saida_evento",
+  ["22:40"] = "evento", ["23:05"] = "Saida_evento",
+  ["13:00"] = "clickup", ["13:12"] = "clickup_saida",
+  ["18:00"] = "clickup", ["18:12"] = "clickup_saida",
+  ["22:00"] = "clickup", ["22:12"] = "clickup_saida",
+}
+
+storage.lastEventProfile = storage.lastEventProfile or ""
+
+-- CHECA SE ESTÁ DENTRO DE UM BLOCO DE EVENTO
+local function isInEventBlock()
+  local now = os.date("*t")
+  local currentMinutes = now.hour * 60 + now.min
+
+  local scheduleList = {}
+  for timeStr, profile in pairs(profileSchedule) do
+    local h, m = timeStr:match("(%d+):(%d+)")
+    local totalMinutes = tonumber(h) * 60 + tonumber(m)
+    table.insert(scheduleList, {minutes = totalMinutes, profile = profile})
+  end
+
+  table.sort(scheduleList, function(a, b) return a.minutes < b.minutes end)
+
+  for i = 1, #scheduleList - 1 do
+    local current = scheduleList[i]
+    local next = scheduleList[i + 1]
+
+    if not current.profile:lower():match("saida") and next.profile:lower():match("saida") then
+      if current.minutes <= currentMinutes and currentMinutes <= next.minutes then
+        return true, current.profile
+      end
+    end
+  end
+
+  return false
+end
+
+-- MACRO PRINCIPAL (TROCA PERFIL)
+local myMacro = macro(macroDelay, function()
+  local now = os.date("*t")
+  local currentTime = string.format("%02d:%02d", now.hour, now.min)
+  local profileToLoad = profileSchedule[currentTime]
+
+  if profileToLoad then
+    if CaveBot.getCurrentProfile() ~= profileToLoad then
+      CaveBot.setCurrentProfile(profileToLoad)
+      print("[EVENTO] Perfil carregado: " .. profileToLoad)
+    end
+    storage.lastEventProfile = profileToLoad
+    return
+  end
+
+  local inBlock, eventProfile = isInEventBlock()
+  if inBlock then
+    if CaveBot.getCurrentProfile() ~= eventProfile then
+      CaveBot.setCurrentProfile(eventProfile)
+      print("[BLOCO ATIVO] Mantendo perfil: " .. eventProfile)
+    end
+    return
+  end
+
+  local idleProfile = storage.idleProfile
+  if CaveBot.getCurrentProfile() ~= idleProfile then
+    CaveBot.setCurrentProfile(idleProfile)
+    print("[IDLE] Perfil padrão carregado: " .. idleProfile)
+  end
+
+  if not CaveBot.isOn() then
+    CaveBot.setOn(true)
+  end
+end)
+myMacro.setOn(false)
+
+-- ÍCONE COM OUTFIT
+local myIcon = addIcon(macroName, {outfit = outfit, text = macroName}, function(icon, isOn)
+  myMacro.setOn(isOn)
+  if isOn then
+  else
+    icon.text:setText(macroName)
+  end
+end)
+myIcon:setSize({width = 100, height = 50})
