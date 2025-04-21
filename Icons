@@ -217,3 +217,184 @@ local paralyze = macro(50, function()
 end)
 
 addIcon("AParalyzeIcon", {item={id=11630, count=1}, text= "Paralyze",}, paralyze)
+
+--------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------
+local potionsId = {3241, 9149, 0000} -- Adicione mais potions se quiser
+local minStaminaHoursLeft = 40
+
+-- Armazena estado do macro
+local staminaMacro = macro(1000, function()
+    if stamina() < minStaminaHoursLeft * 60 then
+        for _, potId in ipairs(potionsId) do
+            local pot = findItem(potId)
+            if pot then
+                use(pot, player)
+                break
+            end
+        end
+    end
+end)
+staminaMacro.setOn(false) -- Começa desativado
+
+-- Cria ícone com visual e toggle
+local staminaIcon = addIcon("Stamina", {item=3241, text="Stamina"}, function(icon, isOn)
+    staminaMacro.setOn(isOn)
+end)
+staminaIcon:setSize({width = 100, height = 50})
+
+-- Atualiza texto com a stamina atual
+macro(200, function()
+    staminaIcon.text:setText("Stam: "..math.floor(stamina() / 60).."h")
+    for _, id in ipairs(potionsId) do
+        if findItem(id) then
+            staminaIcon.item:setItemId(id)
+            break
+        end
+    end
+end)
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------
+local potions, lastUsedIndex = {6542, 6543, 6544, 6545}, 0
+storage.lastCombo = lastUsedIndex
+macroCombo = macro(1000, function()
+    lastUsedIndex = (lastUsedIndex % #potions) + 1
+    storage.lastCombo = lastUsedIndex
+    local pot = findItem(potions[lastUsedIndex])
+    if pot then
+        use(pot, player)
+        delay(100)
+    end
+end)
+local comboIcon = addIcon("Combo", {item=6542, text="Combo"}, function(icon, isOn)
+    macroCombo.setOn(isOn)
+end)
+comboIcon:setSize({width = 100, height = 50})
+macroUpdateComboIcon = macro(200, function()
+    comboIcon.text:setText("Usando: "..storage.lastCombo + 1 .."x")
+    comboIcon.item:setItemId(storage.lastCombo + 6541)
+end)
+-------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------
+setDefaultTab("Tools")
+local itemIdsToUse, useRange, moveRange = {8997, }, 1, 7
+local function findItemsInLayer(layerIndex)
+	local searchLayers = {
+		{from = {x = posx() - 1, y = posy() - 1, z = posz()}, to = {x = posx() + 1, y = posy() + 1, z = posz()}},
+		{from = {x = posx() - 2, y = posy() - 2, z = posz()}, to = {x = posx() + 2, y = posy() + 2, z = posz()}},
+		{from = {x = posx() - 3, y = posy() - 3, z = posz()}, to = {x = posx() + 3, y = posy() + 3, z = posz()}},
+		{from = {x = posx() - 4, y = posy() - 4, z = posz()}, to = {x = posx() + 4, y = posy() + 4, z = posz()}},
+		{from = {x = posx() - 5, y = posy() - 5, z = posz()}, to = {x = posx() + 5, y = posy() + 5, z = posz()}},
+		{from = {x = posx() - 6, y = posy() - 6, z = posz()}, to = {x = posx() + 6, y = posy() + 6, z = posz()}},
+		{from = {x = posx() - 7, y = posy() - 7, z = posz()}, to = {x = posx() + 7, y = posy() + 7, z = posz()}}
+	}
+	if layerIndex > #searchLayers then return false end
+	local currentLayer = searchLayers[layerIndex]
+	for x = currentLayer.from.x, currentLayer.to.x do
+		for y = currentLayer.from.y, currentLayer.to.y do
+			local tile = g_map.getTile({x = x, y = y, z = posz()})
+			if tile then
+				for _, item in ipairs(tile:getItems()) do
+					if item and table.contains(itemIdsToUse, item:getId()) then
+						if CaveBot.isOn() then CaveBot.setOff() print("desativando cavebot") end
+						local distance = getDistanceBetween(pos(), tile:getPosition())
+						if distance <= useRange then
+							g_game.use(item)
+							return true
+						elseif distance > useRange and distance <= moveRange then
+							if autoWalk(tile:getPosition(), moveRange, {ignoreNonPathable = true, precision = 1}) then
+								delay(100)
+								return true
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+	return findItemsInLayer(layerIndex + 1)
+end
+
+clickup = macro(100, function()
+	if not findItemsInLayer(1) then
+		if CaveBot.isOff() then
+			print("ativando cavebot")
+			CaveBot.setOn()
+		end
+	end
+end)
+addIcon("clickup", {item={id=8997, count=1}, text="CLICK UP", }, clickup)
+----------------------------------------------------------------------------------------
+----------------------------------
+setDefaultTab("tools")
+-- Tile IDs configuráveis
+addLabel("safetext", "COLOQUE ID DOS TILES SAFEZONE")
+storage.tileIDs = storage.tileIDs or {10145, 54321}
+
+-- Macro de seguir para tiles específicos
+TileFollowMacro = macro(1, function() end)
+
+-- Campo de edição para inserir os IDs
+addTextEdit("tileIDs", table.concat(storage.tileIDs, ", "), function(widget, text)
+  local ids = {}
+  for id in string.gmatch(text, "%d+") do
+    table.insert(ids, tonumber(id))
+  end
+  storage.tileIDs = ids
+end)
+
+-- Função para buscar o tile com ID desejado
+local function findClosestTileWithIDs(ids)
+  local playerPos = pos()
+  local closestTile = nil
+  local closestDistance = math.huge
+  for x = -15, 15 do
+    for y = -15, 15 do
+      local tile = g_map.getTile({x = playerPos.x + x, y = playerPos.y + y, z = playerPos.z})
+      if tile then
+        local topThing = tile:getTopUseThing()
+        if topThing and table.contains(ids, topThing:getId()) then
+          local distance = getDistanceBetween(playerPos, tile:getPosition())
+          if distance < closestDistance then
+            closestDistance = distance
+            closestTile = tile:getPosition()
+          end
+        end
+      end
+    end
+  end
+  return closestTile
+end
+
+-- Movimento automático ao tile
+onCreaturePositionChange(function(creature, newPos, oldPos)
+  if TileFollowMacro:isOff() then return end
+  if creature:getName() ~= player:getName() then return end
+
+  local targetTilePos = findClosestTileWithIDs(storage.tileIDs)
+  if not targetTilePos then
+    return print("Nenhum tile com os IDs fornecidos foi encontrado!")
+  end
+  if getDistanceBetween(pos(), targetTilePos) > 0 then
+    autoWalk(targetTilePos, 15, {precision = 0})
+  end
+end)
+
+-- Animação do ícone de SAFEZONE
+local safeIcons = {8646, 8647, 8648, 8649}
+storage.safeAnimIndex = storage.safeAnimIndex or 1
+
+local safeIcon = addIcon("TileFollowMacro", {item=8646, text="SAFEZONE"}, function(icon, isOn)
+  TileFollowMacro.setOn(isOn)
+end)
+safeIcon:setSize({width = 100, height = 50})
+
+-- Atualização visual do ícone (como no combo de potions)
+macro(200, function()
+  storage.safeAnimIndex = (storage.safeAnimIndex % #safeIcons) + 1
+  safeIcon.text:setText("SAFEZONE")
+  safeIcon.item:setItemId(safeIcons[storage.safeAnimIndex])
+end)
+
+----------------------------------------------------------------------------------------------------------------
+-----------------
