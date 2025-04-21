@@ -1,0 +1,278 @@
+setDefaultTab("tools")
+------------------------------------
+-----------------------------------------------------------------------------------------------------
+-- HIDE EFFECT --------------------------------------------------
+local hideAllMacro = macro(100, function() end)
+hideAllMacro.setOn(false)
+
+onAddThing(function(tile, thing)
+    if hideAllMacro:isOff() then return end
+    if thing:isEffect() then thing:hide() end
+end)
+
+onStaticText(function(thing, text)
+    if hideAllMacro:isOff() then return end
+    if not text:find("says:") then g_map.cleanTexts() end
+end)
+
+addIcon("hideAll", {item=3023, text="HIDE EFFECT"}, function(icon, isOn)
+    hideAllMacro.setOn(isOn)
+end)
+----------------------------------------------------------------------------------------------------------
+-----------------------------------------
+-- RELOG --------------------------------------------------------
+local relogMacro = macro(200, function()
+    if hppercent() <= 0 or not g_game.isOnline() then
+        modules.client_entergame.CharacterList.doLogin()
+    end
+end)
+relogMacro.setOn(false)
+
+addIcon("relog", {item=4247, text="RELOG"}, function(icon, isOn)
+    relogMacro.setOn(isOn)
+end)
+
+--------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------
+-- MAGIA BUFF ---------------------------------------------------
+storage.buff = storage.buff or "Digite o buff"
+local buffMacro = macro(200, function()
+    if not hasPartyBuff() then
+        say(storage.buff)
+    end
+end)
+buffMacro.setOn(false)
+
+addLabel("buffLabel", "COLOQUE A MAGIA DE BUFF")
+addTextEdit("buffText", storage.buff, function(widget, text)
+    storage.buff = text
+end)
+
+addIcon("buffz", {item=9392, text="MAGIA BUFF"}, function(icon, isOn)
+    buffMacro.setOn(isOn)
+end)
+
+----------------------------------------------------------------------------------------------------------------
+---------------------------
+-- CONJURE X5 --------------------------------------------------
+local x5Macro = macro(200, function()
+    if soul() >= 25 then
+        say("conjure 5x")
+    end
+end)
+x5Macro.setOn(false)
+
+addIcon("x5", {item=6545, text="CONJURE X5"}, function(icon, isOn)
+    x5Macro.setOn(isOn)
+end)
+---------------------------------------------------------------------
+local x4Macro = macro(200, function()
+    if soul() >= 25 then
+        say("conjure 4x")
+    end
+end)
+x4Macro.setOn(false)
+
+addIcon("x4", {item=6544, text="CONJURE X4"}, function(icon, isOn)
+    x4Macro.setOn(isOn)
+end)
+-------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------- 
+-------------------------------------------------------------------
+-- RESET --------------------------------------------------------
+local resetMacro = macro(200, function() end)
+resetMacro.setOn(false)
+
+onTextMessage(function(mode, text)
+    if text:find("You were downgraded from") and resetMacro:isOn() then
+        say("!resetar")
+    end
+end)
+
+addIcon("reset", {item=3613, text="RESETAR"}, function(icon, isOn)
+    resetMacro.setOn(isOn)
+end)
+----------------------------------------------------------------------------------------
+-- OPEN BACKPACK ------------------------------------------------
+local openBPMacro = macro(200, function()
+    local bpItem = getBack()
+    local bp = getContainer(0)
+    if not bp and bpItem then g_game.open(bpItem) end
+end)
+openBPMacro.setOn(false)
+
+onContainerClose(function(container)
+    if container:getId() == 0 then
+        local bpItem = getBack()
+        if bpItem then g_game.open(bpItem) end
+    end
+end)
+
+addIcon("bp", {item=6508, text="OPEN BP"}, function(icon, isOn)
+    openBPMacro.setOn(isOn)
+end)
+---------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------
+-- PICKUP --------------------------------------------------------
+local pickupMacro = macro(200, function()
+    local tile = g_map.getTile(pos())
+    if tile then
+        for _, item in ipairs(tile:getItems()) do
+            if item:isPickupable() then
+                g_game.move(item, {x=65535, y=SlotBack, z=0}, item:getCount())
+                delay(100)
+            end
+        end
+    end
+end)
+pickupMacro.setOn(false)
+
+addIcon("pickupIcon", {item=2526, text="PICK-UP ITENS"}, function(icon, isOn)
+    pickupMacro.setOn(isOn)
+end)
+
+--------------------------------------------------------------------------------------------------------------------------
+----------------------------------------
+-- DANCE --------------------------------------------------------
+local danceMacro = macro(200, function()
+    turn(math.random(0, 3))
+end)
+danceMacro.setOn(false)
+
+addIcon("danceIcon", {item=9378, text="DANCE"}, function(icon, isOn)
+    danceMacro.setOn(isOn)
+end)
+
+---------------------------------------------------------------------------------------------------------
+--------------------------------------------------
+-- AURA ---------------------------------------------------------
+local auraMacro = macro(20000, function()
+    say("!aura on")
+end)
+auraMacro.setOn(false)
+
+addIcon("auraIcon", {item=10871, text="ATIVAR AURA"}, function(icon, isOn)
+    auraMacro.setOn(isOn)
+end)
+
+---------------------------------------------------------------------------------------------------------
+----------------------------------
+storage.MWPoses = storage.MWPoses or { }
+
+macro(50, "FIXAR MAGIC WALL", function()
+  for _, candidate in ipairs(storage.MWPoses) do
+    local mwTile = g_map.getTile(candidate)
+    if mwTile and mwTile:canShoot() then
+      if mwTile:getTopUseThing():getId() ~= 2130 then
+        mwTile:setText("MW FIXO")
+        useWith(3180, mwTile:getGround())
+      end
+    end
+  end
+end)
+
+addButton("","selec pose", function()
+  table.insert(storage.MWPoses, pos())
+end)
+
+addButton("","Limpar todas Poses", function()
+  for _, candidate in ipairs(storage.MWPoses) do
+    local mwTile = g_map.getTile(candidate)
+    if mwTile then
+      mwTile:setText("")
+    end
+  end
+  storage.MWPoses = { }
+end)
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------
+storage.WGPoses = storage.WGPoses or { }
+
+macro(50, "FIXAR GRAV", function()
+  for _, candidate in ipairs(storage.WGPoses) do
+    local wgTile = g_map.getTile(candidate)
+    if wgTile and wgTile:canShoot() then
+      if wgTile:getTopUseThing():getId() ~= 2130 then
+        wgTile:setText("FIXO")
+ useWith(3156, wgTile:getGround())
+      end
+    end
+  end
+end)
+
+addButton("","Selec Poses", function()
+  table.insert(storage.WGPoses, pos())
+end)
+
+addButton("","Limpar Poses", function()
+  for _, candidate in ipairs(storage.WGPoses) do
+    local wgTile = g_map.getTile(candidate)
+    if wgTile then
+      wgTile:setText("")
+    end
+  end
+  storage.WGPoses = { }
+end)
+----------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------
+-- SUMMON -------------------------------------------------------
+setDefaultTab("tools")
+local summonDelay = 20000
+local lastSummon = 0
+addLabel("summon", "COLOQUE NOME DO BIXO QUE VAI SE TRANSFORMAR")
+addTextEdit("summonName", storage.summonName or "Digite o nome", function(widget, text)
+    storage.summonName = text
+end)
+
+local summonMacro = macro(100, function()
+    if storage.summonName ~= "" and now >= lastSummon + summonDelay then
+        say('utevo res ina "' .. storage.summonName .. '"')
+        lastSummon = now
+    end
+end)
+summonMacro.setOn(false)
+
+addIcon("summon", {item=8175, text="SUMMON"}, function(icon, isOn)
+    summonMacro.setOn(isOn)
+end)
+------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+----------------------------
+local PvpConfig = {
+    buyAtLogin = true,
+    buyCommand = "!pvp off"
+}
+
+PvpConfig.hasBought = false
+addIcon("PvP Off", {item={id=9056, count=1}, text="PvP Off"}, macro(1000, function(m)
+    if PvpConfig.buyAtLogin and not PvpConfig.hasBought then
+        say(PvpConfig.buyCommand)
+        PvpConfig.hasBought = true
+    end
+    if g_game.getClientVersion() > 1000 and player:getBlessings() == 0 then
+        say(PvpConfig.buyCommand)
+    end
+end))
+------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+local m_antipush = macro(50, function()
+  local t = g_map.getTile(pos())
+  if t then
+      local topT = t:getTopUseThing()
+      if not topT:isNotMoveable() then return end
+      g_game.move(findItem(3031), pos(), 2)
+  end
+end)
+
+addIcon("AntiPushIcon", {item={id=3031, count=5}, text= "AntPush", hotkey= "F4"}, m_antipush) 
+--------------------------------------------------------------------------------------------------------
+-----------------------
+
+local paralyze = macro(50, function()
+  if g_game.isAttacking() then
+      usewith(3165, g_game.getAttackingCreature())
+      delay(200)
+  end
+end)
+
+addIcon("AParalyzeIcon", {item={id=11630, count=1}, text= "Paralyze",}, paralyze)
