@@ -1,6 +1,4 @@
 setDefaultTab("tools")
-------------------------------------
------------------------------------------------------------------------------------------------------
 -- HIDE EFFECT --------------------------------------------------
 local hideAllMacro = macro(100, function() end)
 hideAllMacro.setOn(false)
@@ -395,6 +393,3 @@ macro(200, function()
   safeIcon.text:setText("SAFEZONE")
   safeIcon.item:setItemId(safeIcons[storage.safeAnimIndex])
 end)
-
-----------------------------------------------------------------------------------------------------------------
------------------
