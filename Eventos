@@ -34,7 +34,7 @@ local profileSchedule = {
   ["15:40"] = "evento", ["16:05"] = "Saida_evento",
   ["17:00"] = "evento", ["17:25"] = "Saida_evento",
   ["19:40"] = "evento", ["19:59"] = "Saida_evento",
-  ["20:00"] = "evento", ["20:15"] = "Saida_evento",
+  ["20:00"] = "evento", ["20:15"] = "Saida_evento", ---- AUTERADO RECENTEMENTE DE 20:25 PRA 20:15
   ["22:40"] = "evento", ["23:05"] = "Saida_evento",
   ["13:00"] = "clickup", ["13:12"] = "clickup_saida",
   ["18:00"] = "clickup", ["18:12"] = "clickup_saida",
