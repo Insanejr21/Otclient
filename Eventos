@@ -22,20 +22,20 @@ end)
 
 -- HORÁRIOS DOS EVENTOS / CLICKUPs
 local profileSchedule = {
-  ["02:40"] = "evento", ["03:05"] = "Saida_evento",
-  ["03:00"] = "evento", ["03:25"] = "Saida_evento",
-  ["05:40"] = "evento", ["06:05"] = "Saida_evento",
-  ["07:00"] = "evento", ["07:25"] = "Saida_evento",
-  ["08:40"] = "evento", ["09:05"] = "Saida_evento",
-  ["10:00"] = "evento", ["10:25"] = "Saida_evento",
-  ["11:40"] = "evento", ["12:25"] = "Saida_evento",
-  ["13:40"] = "evento", ["14:05"] = "Saida_evento",
-  ["15:00"] = "evento", ["15:25"] = "Saida_evento",
-  ["15:40"] = "evento", ["16:05"] = "Saida_evento",
-  ["17:00"] = "evento", ["17:25"] = "Saida_evento",
-  ["19:40"] = "evento", ["19:59"] = "Saida_evento",
-  ["20:00"] = "evento", ["20:15"] = "Saida_evento", ---- AUTERADO RECENTEMENTE DE 20:25 PRA 20:15
-  ["22:40"] = "evento", ["23:05"] = "Saida_evento",
+  ["02:40"] = "evento", ["03:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["03:00"] = "evento", ["03:20"] = "Saida_evento", ---- INVASAO DE BOSES
+  ["05:40"] = "evento", ["06:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["07:00"] = "evento", ["07:20"] = "Saida_evento", ---- INVASAO DE BOSES
+  ["08:40"] = "evento", ["09:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["10:00"] = "evento", ["10:20"] = "Saida_evento", ---- INVASAO DE BOSES
+  ["11:40"] = "evento", ["12:20"] = "Saida_evento", ---- INVASAO DE BOSES + EXP
+  ["13:40"] = "evento", ["14:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["15:00"] = "evento", ["15:20"] = "Saida_evento", ---- INVASAO DE BOSES
+  ["15:40"] = "evento", ["16:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["17:00"] = "evento", ["17:20"] = "Saida_evento", ---- INVASAO DE BOSES
+  ["19:40"] = "evento", ["19:59"] = "Saida_evento", ---- INVASAO DE EXP
+  ["20:00"] = "evento", ["20:20"] = "Saida_evento", ---- INVASAO DE BOSES
+  ["22:40"] = "evento", ["23:05"] = "Saida_evento", ---- INVASAO DE EXP
   ["13:00"] = "clickup", ["13:12"] = "clickup_saida",
   ["18:00"] = "clickup", ["18:12"] = "clickup_saida",
   ["22:00"] = "clickup", ["22:12"] = "clickup_saida",
