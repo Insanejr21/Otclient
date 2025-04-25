@@ -313,7 +313,7 @@ local function findItemsInLayer(layerIndex)
 	return findItemsInLayer(layerIndex + 1)
 end
 
-clickup = macro(100, "CLICKUP", function()
+clickup = macro(100, function()
 	if not findItemsInLayer(1) then
 		if CaveBot.isOff() then
 			print("ativando cavebot")
