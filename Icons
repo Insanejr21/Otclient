@@ -54,7 +54,7 @@ end)
 ------------------------------------- CONJURE 5X R 4X ------------------------------------------------------------
 -- CONFIGURAÇÃO
 local conjureIDs = {6545, 6544} -- ID do conjure 5x e 4x
-local macroName = "AUTO CONJURE"
+local macroName = "Conjure XP"
 local iconIDs = {6544, 6545}
 local macroDelay = 1000
 local iconDelay = 600
