@@ -54,14 +54,14 @@ end)
 ------------------------------------- CONJURE 5X R 4X ------------------------------------------------------------
 -- CONFIGURAÇÃO
 local conjureIDs = {6545, 6544} -- ID do conjure 5x e 4x
-local macroName = "Conjure XP"
+local macroName = "AUTO CONJURE"
 local iconIDs = {6544, 6545}
 local macroDelay = 1000
 local iconDelay = 600
 
 storage[macroName.."Index"] = storage[macroName.."Index"] or 1
 
--- Função pra checar se tem item na bp
+-- Função pra ver se tem item na bp
 local function temItem(id)
   for _, container in pairs(getContainers()) do
     for _, item in pairs(container:getItems()) do
@@ -81,10 +81,10 @@ local myMacro = macro(macroDelay, function()
     local tem5x = temItem(itemID5x)
     local tem4x = temItem(itemID4x)
 
-    if not tem5x then
-      say("conjure 5x")
-    elseif not tem4x then
+    if not tem4x then
       say("conjure 4x")
+    elseif not tem5x then
+      say("conjure 5x")
     end
   end
 end)
@@ -94,12 +94,14 @@ myMacro.setOn(false)
 local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
   myMacro.setOn(isOn)
   if isOn then
+    icon.text:setText(macroName.." ON")
   else
     icon.text:setText(macroName)
   end
 end)
 myIcon:setSize({width = 100, height = 50})
 
+-- Animação do ícone
 macro(iconDelay, function()
   storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
   myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
