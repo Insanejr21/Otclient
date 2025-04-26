@@ -34,7 +34,6 @@ local profileSchedule = {
   ["15:40"] = "evento", ["16:05"] = "Saida_evento", ---- INVASAO DE EXP
   ["17:00"] = "evento", ["17:20"] = "Saida_evento", ---- INVASAO DE BOSES
   ["19:40"] = "evento", ["20:20"] = "Saida_evento", ---- INVASAO DE EXP + BOSS
-  ["20:00"] = "evento", ["20:20"] = "Saida_evento", ---- INVASAO DE BOSES
   ["22:40"] = "evento", ["23:05"] = "Saida_evento", ---- INVASAO DE EXP
   ["13:00"] = "clickup", ["13:12"] = "clickup_saida",
   ["18:00"] = "clickup", ["18:12"] = "clickup_saida",
