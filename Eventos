@@ -22,19 +22,18 @@ end)
 
 -- HORÁRIOS DOS EVENTOS / CLICKUPs
 local profileSchedule = {
-  ["02:40"] = "evento", ["03:05"] = "Saida_evento", ---- INVASAO DE EXP
-  ["03:00"] = "evento", ["03:20"] = "Saida_evento", ---- INVASAO DE BOSES
-  ["05:40"] = "evento", ["06:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["02:40"] = "evento", ["03:20"] = "Saida_evento", ---- INVASAO DE EXP + BOSSES
+  ["05:40"] = "evento", ["06:07"] = "Saida_evento", ---- INVASAO DE EXP
   ["07:00"] = "evento", ["07:20"] = "Saida_evento", ---- INVASAO DE BOSES
-  ["08:40"] = "evento", ["09:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["08:40"] = "evento", ["09:07"] = "Saida_evento", ---- INVASAO DE EXP
   ["10:00"] = "evento", ["10:20"] = "Saida_evento", ---- INVASAO DE BOSES
   ["11:40"] = "evento", ["12:20"] = "Saida_evento", ---- INVASAO DE BOSES + EXP
-  ["13:40"] = "evento", ["14:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["13:40"] = "evento", ["14:07"] = "Saida_evento", ---- INVASAO DE EXP
   ["15:00"] = "evento", ["15:20"] = "Saida_evento", ---- INVASAO DE BOSES
-  ["15:40"] = "evento", ["16:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["15:40"] = "evento", ["16:07"] = "Saida_evento", ---- INVASAO DE EXP
   ["17:00"] = "evento", ["17:20"] = "Saida_evento", ---- INVASAO DE BOSES
   ["19:40"] = "evento", ["20:20"] = "Saida_evento", ---- INVASAO DE EXP + BOSS
-  ["22:40"] = "evento", ["23:05"] = "Saida_evento", ---- INVASAO DE EXP
+  ["22:40"] = "evento", ["23:07"] = "Saida_evento", ---- INVASAO DE EXP
   ["13:00"] = "clickup", ["13:12"] = "clickup_saida",
   ["18:00"] = "clickup", ["18:12"] = "clickup_saida",
   ["22:00"] = "clickup", ["22:12"] = "clickup_saida",
