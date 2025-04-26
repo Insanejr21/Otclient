@@ -53,35 +53,34 @@ end)
 ----------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------- CONJURE 5X R 4X ------------------------------------------------------------
 -- CONFIGURAÇÃO
-local conjureIDs = {6545, 6544} -- IDs do conjure 5x e 4x
-local macroName = "Conjure"
-local iconIDs = {6545, 6544}
+local conjureIDs = {6545, 6544} -- ID do conjure 5x e 4x
+local macroName = "AUTO CONJURE"
+local iconIDs = {6544, 6545}
 local macroDelay = 1000
 local iconDelay = 600
 
 storage[macroName.."Index"] = storage[macroName.."Index"] or 1
 
-local myMacro = macro(macroDelay, function()
-  local itemID5x, itemID4x = conjureIDs[1], conjureIDs[2]
-  local tem5x, tem4x = false, false
-
+-- Função pra checar se tem item na bp
+local function temItem(id)
   for _, container in pairs(getContainers()) do
     for _, item in pairs(container:getItems()) do
-      if item:getId() == itemID5x then
-        tem5x = true
-      elseif item:getId() == itemID4x then
-        tem4x = true
+      if item:getId() == id then
+        return true
       end
-      if tem5x and tem4x then
-        break
-      end
-    end
-    if tem5x and tem4x then
-      break
     end
   end
+  return false
+end
+
+-- Macro principal
+local myMacro = macro(macroDelay, function()
+  local itemID5x, itemID4x = conjureIDs[1], conjureIDs[2]
 
   if soul() >= 25 then
+    local tem5x = temItem(itemID5x)
+    local tem4x = temItem(itemID4x)
+
     if not tem5x then
       say("conjure 5x")
     elseif not tem4x then
@@ -91,6 +90,7 @@ local myMacro = macro(macroDelay, function()
 end)
 myMacro.setOn(false)
 
+-- Ícone pra ligar/desligar
 local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
   myMacro.setOn(isOn)
   if isOn then
@@ -104,6 +104,7 @@ macro(iconDelay, function()
   storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
   myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
 end)
+
 -------------------------------------------------------------------
 -- RESET --------------------------------------------------------
 local resetMacro = macro(200, function() end)
