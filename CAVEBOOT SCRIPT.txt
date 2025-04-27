@@ -4,45 +4,77 @@ local eventTimes = {
   "16:57", "17:57", "19:37", "19:57", "21:57", "22:37"
 }
 
-local eventWindow = 5 * 60 -- segundos de janela (5 minutos)
+local eventWindow = 5 * 60 -- 5 minutos em segundos (janela de atraso)
+local lastCheck = 0
+local checkInterval = 1 -- Verificar a cada 1 segundo
 
 local function getTimestamp(hhmm)
   local h, m = hhmm:match("^(%d+):(%d+)$")
+  if not h or not m then
+    print("[Erro] Formato de horário inválido: " .. hhmm)
+    return nil
+  end
+  h, m = tonumber(h), tonumber(m)
+  if h < 0 or h > 23 or m < 0 or m > 59 then
+    print("[Erro] Horário fora do intervalo válido: " .. hhmm)
+    return nil
+  end
   local now = os.date("*t")
-  return os.time({
+  local eventTime = os.time({
     year = now.year,
     month = now.month,
     day = now.day,
-    hour = tonumber(h),
-    min = tonumber(m),
+    hour = h,
+    min = m,
     sec = 0
   })
+  -- Se o evento já passou hoje, considera o próximo dia
+  if eventTime + eventWindow < os.time() then
+    eventTime = eventTime + 24 * 60 * 60 -- Adiciona 1 dia
+  end
+  return eventTime
 end
 
 function checkEventTime()
   local now = os.time()
+  if now - lastCheck < checkInterval then
+    return -- Evita verificações frequentes
+  end
+  lastCheck = now
+
+  if not CaveBot or not CaveBot.gotoLabel then
+    print("[Erro] CaveBot não está disponível.")
+    return
+  end
+
   local nextEvent = nil
   local minDiff = math.huge
 
   for _, timeStr in ipairs(eventTimes) do
     local eventTime = getTimestamp(timeStr)
-    local diff = eventTime - now
-
-    if diff >= -eventWindow and diff < minDiff then
-      minDiff = diff
-      nextEvent = eventTime
+    if eventTime then
+      local diff = eventTime - now
+      -- Considera eventos até 5 minutos após o horário
+      if diff >= -eventWindow and diff < minDiff then
+        minDiff = diff
+        nextEvent = eventTime
+      end
     end
   end
 
   if nextEvent then
     local secondsLeft = nextEvent - now
     if secondsLeft <= eventWindow then
-      print(string.format("[Evento] Dentro da janela do evento! Indo para o templo."))
+      if secondsLeft >= 0 then
+        print("[Evento] Horário do evento! Indo para o templo.")
+      else
+        print("[Evento] Atrasado, mas ainda na janela! Indo para o templo.")
+      end
       CaveBot.gotoLabel("templo")
     else
       local minutes = math.floor(secondsLeft / 60)
       local seconds = secondsLeft % 60
-      print(string.format("[Evento] Próximo evento em %d minutos e %d segundos.", minutes, seconds))
+      print(string.format("[Evento] Proximo evento em %d minutos e %d segundos.", minutes, seconds))
       CaveBot.gotoLabel("hunt")
     end
   else
@@ -51,6 +83,5 @@ function checkEventTime()
   end
 end
 
--- Chama a função ao passar no label
 checkEventTime()
 return true
