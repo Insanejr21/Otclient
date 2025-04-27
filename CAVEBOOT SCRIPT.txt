@@ -1,0 +1,56 @@
+local eventTimes = {
+  "02:57", "05:37", "06:57", "08:37", "09:57",
+  "11:37", "12:57", "13:37", "14:57", "15:37",
+  "16:57", "17:57", "19:37", "19:57", "21:57", "22:37"
+}
+
+local eventWindow = 5 * 60 -- segundos de janela (5 minutos)
+
+local function getTimestamp(hhmm)
+  local h, m = hhmm:match("^(%d+):(%d+)$")
+  local now = os.date("*t")
+  return os.time({
+    year = now.year,
+    month = now.month,
+    day = now.day,
+    hour = tonumber(h),
+    min = tonumber(m),
+    sec = 0
+  })
+end
+
+function checkEventTime()
+  local now = os.time()
+  local nextEvent = nil
+  local minDiff = math.huge
+
+  for _, timeStr in ipairs(eventTimes) do
+    local eventTime = getTimestamp(timeStr)
+    local diff = eventTime - now
+
+    if diff >= -eventWindow and diff < minDiff then
+      minDiff = diff
+      nextEvent = eventTime
+    end
+  end
+
+  if nextEvent then
+    local secondsLeft = nextEvent - now
+    if secondsLeft <= eventWindow then
+      print(string.format("[Evento] Dentro da janela do evento! Indo para o templo."))
+      CaveBot.gotoLabel("templo")
+    else
+      local minutes = math.floor(secondsLeft / 60)
+      local seconds = secondsLeft % 60
+      print(string.format("[Evento] Próximo evento em %d minutos e %d segundos.", minutes, seconds))
+      CaveBot.gotoLabel("hunt")
+    end
+  else
+    print("[Evento] Nenhum evento próximo. Continuando caçada.")
+    CaveBot.gotoLabel("hunt")
+  end
+end
+
+-- Chama a função ao passar no label
+checkEventTime()
+return true
