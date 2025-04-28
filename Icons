@@ -766,3 +766,40 @@ UI.Label("TEMPO DE LANCAMENTO GW:")
 UI.TextEdit(storage.mwThrowTimer or "70", function(widget, text)
   storage.mwThrowTimer = tonumber(text)
 end)
+
+------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------
+local function checkPos(x, y)
+  local xyz = g_game.getLocalPlayer():getPosition()
+  xyz.x = xyz.x + x
+  xyz.y = xyz.y + y
+  local tile = g_map.getTile(xyz)
+  if tile then
+    return g_game.use(tile:getTopUseThing())
+  else
+    return false
+  end
+end
+
+local m_bugmap = macro(1, function(m) 
+  if modules.corelib.g_keyboard.isKeyPressed('Up') and not modules.corelib.g_keyboard.isKeyPressed('Right') and not modules.corelib.g_keyboard.isKeyPressed('Left') then
+    checkPos(0, -5)
+  elseif modules.corelib.g_keyboard.isKeyPressed('Up') and modules.corelib.g_keyboard.isKeyPressed('Right') then
+    checkPos(3, -3)
+  elseif modules.corelib.g_keyboard.isKeyPressed('Right') and not modules.corelib.g_keyboard.isKeyPressed('Up') and not modules.corelib.g_keyboard.isKeyPressed('Down') then
+    checkPos(5, 0)
+  elseif modules.corelib.g_keyboard.isKeyPressed('Down') and modules.corelib.g_keyboard.isKeyPressed('Right') then
+    checkPos(3, 3)
+  elseif modules.corelib.g_keyboard.isKeyPressed('Down') and not modules.corelib.g_keyboard.isKeyPressed('Right') and not modules.corelib.g_keyboard.isKeyPressed('Left') then
+    checkPos(0, 5)
+  elseif modules.corelib.g_keyboard.isKeyPressed('Down') and modules.corelib.g_keyboard.isKeyPressed('Left') then
+    checkPos(-3, 3)
+  elseif modules.corelib.g_keyboard.isKeyPressed('Left') and not modules.corelib.g_keyboard.isKeyPressed('Up') and not modules.corelib.g_keyboard.isKeyPressed('Down') then
+    checkPos(-5, 0)
+  elseif modules.corelib.g_keyboard.isKeyPressed('Up') and modules.corelib.g_keyboard.isKeyPressed('Left') then
+    checkPos(-3, -3)
+  end
+end)
+
+addIcon("bugmapIcon", {item={id=3079, count=1}, text="Bug Map"}, m_bugmap)
+
