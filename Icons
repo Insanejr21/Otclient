@@ -521,6 +521,7 @@ end)
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------
+setDefaultTab("target")
 -- CONFIGURAÇÃO
 local macroName = "Auto SD"
 local iconIDs = {3150}
@@ -561,8 +562,9 @@ UI.TextEdit(storage.sdRuneId or "3150", function(widget, text)
 end)
 -------------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------
+setDefaultTab("tools")
 local markedPositions = {}
-local key = "F5"
+local key = "F8"
 
 function tablefind(tab, el)
   for index, value in ipairs(tab) do
@@ -594,7 +596,7 @@ local m_travarMW = macro(10, function()
   end
 end)
 
-addIcon("TravarMWIcon", {item={id=2129, count=1}, text="MW Lock", hotkey="F5"}, m_travarMW)
+addIcon("TravarMWIcon", {item={id=2129, count=1}, text="MW Lock", hotkey="F8"}, m_travarMW)
 
 onRemoveThing(function(tile, thing)
   if not m_travarMW.isOn() then return end
@@ -666,7 +668,7 @@ end)
 -----------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 local markedPositions = {}
-local key = "F6"
+local key = "F7"
 
 function tablefind(tab, el)
   for index, value in ipairs(tab) do
@@ -698,7 +700,7 @@ local m_travarGW = macro(10, function()
   end
 end)
 
-addIcon("TravarGWIcon", {item={id=2130, count=1}, text="GW Lock", hotkey="F6"}, m_travarGW)
+addIcon("TravarGWIcon", {item={id=2130, count=1}, text="GW Lock", hotkey="F7"}, m_travarGW)
 
 onRemoveThing(function(tile, thing)
   if not m_travarGW.isOn() then return end
