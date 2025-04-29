@@ -377,7 +377,7 @@ end)
 ------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------
 -- Primeiro Macro: CLICKUP (sem mudanças)
-setDefaultTab("Tools")
+setDefaultTab("cave")
 local itemIdsToUse, useRange, moveRange = {8997}, 1, 7
 local function findItemsInLayer(layerIndex)
   local searchLayers = {
