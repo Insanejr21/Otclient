@@ -556,7 +556,7 @@ macro(iconDelay, function()
 end)
 
 
-UI.Label("ID DA RUNA:")
+UI.Label("ID DA RUNA: ---ICON---")
 UI.TextEdit(storage.sdRuneId or "3150", function(widget, text)
   storage.sdRuneId = tonumber(text)
 end)
