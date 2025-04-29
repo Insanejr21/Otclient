@@ -844,7 +844,7 @@ end))
 ---------------------------------------------------------------------------------------------------
 -- CONFIGURAÇÃO
 local castIconIDs = {9616, 9617, 9618, 9619}
-local macroName = "CAST"
+local macroName = "CAST ON"
 local iconIDs = {9616, 9617, 9618, 9619}
 local macroDelay = 1000
 local iconDelay = 700
@@ -862,7 +862,6 @@ myMacro.setOn(false)
 local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
   myMacro.setOn(isOn)
   if isOn then
-    icon.text:setText(macroName.." ON")
   else
     icon.text:setText(macroName)
   end
