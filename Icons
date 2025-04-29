@@ -840,4 +840,42 @@ addIcon("TramontinaIcon", {item={id=config.machete, count=1}, text="Machete", ho
     end
   end
 end))
+-----------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+-- CONFIGURAÇÃO
+local castIconIDs = {9616, 9617, 9618, 9619}
+local macroName = "CAST"
+local iconIDs = {9616, 9617, 9618, 9619}
+local macroDelay = 1000
+local iconDelay = 700
 
+storage[macroName.."Index"] = storage[macroName.."Index"] or 1
+local castStarted = false
+
+local myMacro = macro(macroDelay, function()
+  if not castStarted and g_game.isOnline() then
+    say("!cast on")
+  end
+end)
+myMacro.setOn(false)
+
+local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
+  myMacro.setOn(isOn)
+  if isOn then
+    icon.text:setText(macroName.." ON")
+  else
+    icon.text:setText(macroName)
+  end
+end)
+myIcon:setSize({width = 100, height = 50})
+
+onTextMessage(function(mode, text)
+  if text:lower():find("your cast stream already enabled") then
+    castStarted = true
+  end
+end)
+
+macro(iconDelay, function()
+  storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
+  myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
+end)
