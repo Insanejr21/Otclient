@@ -3,19 +3,25 @@
 
 local resetTimes = {
 
-  "02:57", "06:57", "09:57", "11:37", "14:57", "16:57", "19:57",
+  "02:55", "06:55", "09:55", "11:55", "14:55", "16:55", "19:55",
 
-  "02:37", "05:37", "08:37", "13:37", "15:37", "19:37", "22:37",
+  "02:35", "05:35", "08:35", "13:35", "15:35", "19:35", "22:35",
 
-  "12:57", "17:57", "21:57"
+  "12:55", "17:55", "21:55"
 
 }
 
+-- Duração da janela de reset em segundos (5 minutos)
+
 local resetWindow = 5 * 60
+
+-- Hora atual
 
 local now = os.date("*t")
 
 local timestampNow = os.time(now)
+
+-- Função que converte uma hora:minuto para timestamp do mesmo dia
 
 local function getTimestamp(hhmm)
 
@@ -41,6 +47,8 @@ local function getTimestamp(hhmm)
 
 end
 
+-- Verifica se estamos dentro de qualquer uma das janelas de reset
+
 local isInResetWindow = false
 
 for _, timeStr in ipairs(resetTimes) do
@@ -58,6 +66,8 @@ for _, timeStr in ipairs(resetTimes) do
   end
 
 end
+
+-- Executa o redirecionamento conforme o tempo atual
 
 if isInResetWindow or (storage.resetUntil and timestampNow <= storage.resetUntil) then
 
