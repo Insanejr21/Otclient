@@ -457,47 +457,6 @@ macro(200, function()
 end)
 ------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------
-setDefaultTab("target")
--- CONFIGURAÇÃO
-local macroName = "Auto SD"
-local iconIDs = {3150}
-local macroDelay = 200
-local iconDelay = 200
-
-storage.sdRuneId = storage.sdRuneId or 3150
-
-storage[macroName.."Index"] = storage[macroName.."Index"] or 1
-
-local myMacro = macro(macroDelay, function()
-  local target = g_game.getAttackingCreature()
-  if target then
-    useWith(storage.sdRuneId, target)
-  end
-end)
-myMacro.setOn(false)
-
-local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
-  myMacro.setOn(isOn)
-end)
-myIcon:setSize({width = 100, height = 50})
-
-macro(iconDelay, function()
-  storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
-  myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
-  if myMacro.isOn() then
-    myIcon.text:setText("ON")
-  else
-    myIcon.text:setText("OFF")
-  end
-end)
-
-
-UI.Label("ID DA RUNA: ---ICON---")
-UI.TextEdit(storage.sdRuneId or "3150", function(widget, text)
-  storage.sdRuneId = tonumber(text)
-end)
--------------------------------------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------
 setDefaultTab("tools")
 local markedPositions = {}
 local key = "F8"
