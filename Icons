@@ -1,20 +1,49 @@
 setDefaultTab("tools")
 -- HIDE EFFECT --------------------------------------------------
-local hideAllMacro = macro(100, function() end)
-hideAllMacro.setOn(false)
+-- CONFIGURAÇÃO
+local hideAllMacro = {5000} 
+local macroName = "EFECCTS"
+local iconIDs = {7359}
+local macroDelay = 1000
+local iconDelay = 200
 
-onAddThing(function(tile, thing)
-    if hideAllMacro:isOff() then return end
-    if thing:isEffect() then thing:hide() end
+storage[macroName.."Index"] = storage[macroName.."Index"] or 1
+
+local myMacro = macro(macroDelay, function()
+  -- O corpo principal da macro não precisa fazer nada repetidamente
 end)
+myMacro.setOn(false)
 
-onStaticText(function(thing, text)
-    if hideAllMacro:isOff() then return end
-    if not text:find("says:") then g_map.cleanTexts() end
+local onAddThingCallback = function(tile, thing)
+  if myMacro.isOff() then return end
+  if thing:isEffect() then
+    thing:hide()
+  end
+end
+
+local onStaticTextCallback = function(thing, text)
+  if myMacro.isOff() then return end
+  if not text:find("says:") then
+    g_map.cleanTexts()
+  end
+end
+
+onAddThing(onAddThingCallback)
+onStaticText(onStaticTextCallback)
+
+local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
+  myMacro.setOn(isOn)
+  if isOn then
+    icon.text:setText(macroName.." OFF")
+  else
+    icon.text:setText(macroName)
+  end
 end)
+myIcon:setSize({width = 100, height = 50})
 
-addIcon("hideAll", {item=3023, text="HIDE EFFECT"}, function(icon, isOn)
-    hideAllMacro.setOn(isOn)
+macro(iconDelay, function()
+  storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
+  myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
 end)
 ----------------------------------------------------------------------------------------------------------
 -----------------------------------------
@@ -46,7 +75,7 @@ addTextEdit("buffText", storage.buff, function(widget, text)
     storage.buff = text
 end)
 
-addIcon("buffz", {item=9392, text="MAGIA BUFF"}, function(icon, isOn)
+addIcon("buffz", {item=9392, text="BUFF"}, function(icon, isOn)
     buffMacro.setOn(isOn)
 end)
 
@@ -75,17 +104,43 @@ icon4x:setSize({width = 100, height = 50})
 
 -------------------------------------------------------------------
 -- RESET --------------------------------------------------------
-local resetMacro = macro(200, function() end)
+local resetMacroIDs = {5000, 200}
+
+local macroName = "RESETAR"
+local iconIDs = {3613, 3613}
+local macroDelay = 200
+local iconDelay = 200
+
+storage[macroName.."Index"] = storage[macroName.."Index"] or 1
+
+local resetMacro = macro(macroDelay, function()
+  -- vazio intencionalmente
+end)
 resetMacro.setOn(false)
 
+local myMacro = macro(5000, function()
+  -- vazio, apenas para delay principal
+end)
+myMacro.setOn(false)
+
 onTextMessage(function(mode, text)
-    if text:find("You were downgraded from") and resetMacro:isOn() then
-        say("!resetar")
-    end
+  if text:find("You were downgraded from") and resetMacro:isOn() then
+    say("!resetar")
+  end
 end)
 
-addIcon("reset", {item=3613, text="RESETAR"}, function(icon, isOn)
-    resetMacro.setOn(isOn)
+local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
+  resetMacro.setOn(isOn)
+  if isOn then
+  else
+    icon.text:setText(macroName)
+  end
+end)
+myIcon:setSize({width = 100, height = 50})
+
+macro(iconDelay, function()
+  storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
+  myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
 end)
 ----------------------------------------------------------------------------------------
 -- OPEN BACKPACK ------------------------------------------------
@@ -103,27 +158,47 @@ onContainerClose(function(container)
     end
 end)
 
-addIcon("bp", {item=6508, text="OPEN BP"}, function(icon, isOn)
+addIcon("bp", {item=5927, text="OPEN BP"}, function(icon, isOn)
     openBPMacro.setOn(isOn)
 end)
 ---------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------
 -- PICKUP --------------------------------------------------------
-local pickupMacro = macro(200, function()
-    local tile = g_map.getTile(pos())
-    if tile then
-        for _, item in ipairs(tile:getItems()) do
-            if item:isPickupable() then
-                g_game.move(item, {x=65535, y=SlotBack, z=0}, item:getCount())
-                delay(100)
-            end
-        end
-    end
-end)
-pickupMacro.setOn(false)
+-- CONFIGURAÇÃO
+local SlotBack = 3
+local macroName = "PEGAR ITENS"
+local iconIDs = {2526}
+local macroDelay = 250
+local iconDelay = 200
 
-addIcon("pickupIcon", {item=2526, text="PICK-UP ITENS"}, function(icon, isOn)
-    pickupMacro.setOn(isOn)
+storage[macroName.."Index"] = storage[macroName.."Index"] or 1
+
+local myMacro = macro(macroDelay, function()
+  local tile = g_map.getTile(pos())
+  if tile then
+    for _, item in ipairs(tile:getItems()) do
+      if item:isPickupable() then
+        if g_game.move(item, {x=65535, y=SlotBack, z=0}, item:getCount()) then
+          delay(100)
+        end
+      end
+    end
+  end
+end)
+myMacro.setOn(false)
+
+local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
+  myMacro.setOn(isOn)
+  if isOn then
+  else
+    icon.text:setText(macroName)
+  end
+end)
+myIcon:setSize({width = 100, height = 50})
+
+macro(iconDelay, function()
+  storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
+  myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
 end)
 
 --------------------------------------------------------------------------------------------------------------------------
@@ -141,13 +216,32 @@ end)
 ---------------------------------------------------------------------------------------------------------
 --------------------------------------------------
 -- AURA ---------------------------------------------------------
-local auraMacro = macro(20000, function()
-    say("!aura on")
-end)
-auraMacro.setOn(false)
+-- CONFIGURAÇÃO
+local macroName = "AURA"
+local iconIDs = {10871}
+local macroDelay = 20000
+local iconDelay = 200
 
-addIcon("auraIcon", {item=10871, text="ATIVAR AURA"}, function(icon, isOn)
-    auraMacro.setOn(isOn)
+storage[macroName.."Index"] = storage[macroName.."Index"] or 1
+
+local myMacro = macro(macroDelay, function()
+  say("!aura on")
+end)
+myMacro.setOn(false)
+
+local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
+  myMacro.setOn(isOn)
+  if isOn then
+    icon.text:setText(macroName.." ON")
+  else
+    icon.text:setText(macroName)
+  end
+end)
+myIcon:setSize({width = 100, height = 50})
+
+macro(iconDelay, function()
+  storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
+  myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
 end)
 ----------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------
@@ -203,15 +297,35 @@ end)
 addIcon("AntiPushIcon", {item={id=3031, count=5}, text= "AntPush", hotkey= "F4"}, m_antipush) 
 --------------------------------------------------------------------------------------------------------
 -----------------------
+-- CONFIGURAÇÃO
+local paralyze = {3165}
+local macroName = "PARALYZE"
+local iconIDs = {11630}
+local macroDelay = 500
+local iconDelay = 200
 
-local paralyze = macro(50, function()
+storage[macroName.."Index"] = storage[macroName.."Index"] or 1
+
+local myMacro = macro(macroDelay, function()
   if g_game.isAttacking() then
-      usewith(3165, g_game.getAttackingCreature())
-      delay(200)
+    usewith(paralyze[1], g_game.getAttackingCreature())
   end
 end)
+myMacro.setOn(false)
 
-addIcon("AParalyzeIcon", {item={id=11630, count=1}, text= "Paralyze",}, paralyze)
+local myIcon = addIcon(macroName, {item = iconIDs[1], text = macroName}, function(icon, isOn)
+  myMacro.setOn(isOn)
+  if isOn then
+  else
+    icon.text:setText(macroName)
+  end
+end)
+myIcon:setSize({width = 100, height = 50})
+
+macro(iconDelay, function()
+  storage[macroName.."Index"] = (storage[macroName.."Index"] % #iconIDs) + 1
+  myIcon.item:setItemId(iconIDs[storage[macroName.."Index"]])
+end)
 
 --------------------------------------------------------------------------------------------------------------------------------
 -----------------------------------
