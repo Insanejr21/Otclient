@@ -1,7 +1,4 @@
--- Aba principal
 setDefaultTab("cave")
-
--- Configuração de uso de item (clickup)
 local itemIdsToUse, useRange, moveRange = {8997}, 1, 7
 local function findItemsInLayer(layerIndex)
   local searchLayers = {}
@@ -37,7 +34,6 @@ local function findItemsInLayer(layerIndex)
   return findItemsInLayer(layerIndex + 1)
 end
 
--- Macro para uso de item
 clickup = macro(100, function()
   if not findItemsInLayer(1) then
     if CaveBot.isOff() then
@@ -48,31 +44,28 @@ clickup = macro(100, function()
 end)
 clickup.setOn(false)
 
--- Configuração de perfis automáticos
 local macroDelay = 250
 local outfit = {type = 356, head = 94, body = 94, legs = 94, feet = 94}
 
--- Interface do sistema de perfis
-UI.Label("CAVES DE UP:")
+UI.Label("CAVES DE UP AFK:")
 storage.idleProfile = storage.idleProfile or "AFK"
 UI.TextEdit(storage.idleProfile, function(widget, text)
   storage.idleProfile = text
 end)
 
-UI.Label(" HORARIOS DOS EVENTOS:")
+UI.Label("HORARIO DE EVENTOS:")
 storage.eventTimes = storage.eventTimes or "02:40,05:40"
 UI.TextEdit(storage.eventTimes, function(widget, text)
   storage.eventTimes = text
 end)
 
-UI.Label(" HORA DE SAIR DO EVENTO:")
+UI.Label("HORARIO DE SAIDA DOS EVENTOS:")
 storage.exitTimes = storage.exitTimes or "03:20,06:07"
 UI.TextEdit(storage.exitTimes, function(widget, text)
   storage.exitTimes = text
 end)
 
--- Gera tabela completa
-function generateProfileSchedule()
+generateProfileSchedule = function()
   local schedule = {}
   for _, t in ipairs(storage.eventTimes:split(",")) do
     t = t:match("^%s*(.-)%s*$")
@@ -82,11 +75,17 @@ function generateProfileSchedule()
     t = t:match("^%s*(.-)%s*$")
     if t ~= "" then schedule[t] = "Saida_evento" end
   end
+
+  for _, t in ipairs({"13:00", "18:00", "22:00"}) do
+    schedule[t] = "clickup"
+  end
+  for _, t in ipairs({"13:12", "18:12", "22:12"}) do
+    schedule[t] = "clickup_saida"
+  end
   return schedule
 end
 
--- Verifica se está num bloco evento > saida
-function isInEventBlock(profileSchedule)
+isInEventBlock = function(profileSchedule)
   local now = os.date("*t")
   local currentMinutes = now.hour * 60 + now.min
   local scheduleList = {}
@@ -110,14 +109,12 @@ function isInEventBlock(profileSchedule)
   return false
 end
 
--- Macro principal de perfis
 eventos = macro(macroDelay, function()
   local now = os.date("*t")
   local currentTime = string.format("%02d:%02d", now.hour, now.min)
   local profileSchedule = generateProfileSchedule()
   local profileToLoad = profileSchedule[currentTime]
 
-  -- 1. Se for horário exato: aplica e bloqueia o resto
   if profileToLoad then
     if CaveBot.getCurrentProfile() ~= profileToLoad then
       CaveBot.setCurrentProfile(profileToLoad)
@@ -126,7 +123,6 @@ eventos = macro(macroDelay, function()
     return
   end
 
-  -- 2. Se estiver dentro de um bloco evento ? saida
   local inBlock, blockProfile = isInEventBlock(profileSchedule)
   if inBlock then
     if CaveBot.getCurrentProfile() ~= blockProfile then
@@ -136,7 +132,6 @@ eventos = macro(macroDelay, function()
     return
   end
 
-  -- 3. Fora de eventos e blocos
   if CaveBot.getCurrentProfile() ~= storage.idleProfile then
     CaveBot.setCurrentProfile(storage.idleProfile)
     print("[PERFIL] Fora de evento, usando: " .. storage.idleProfile)
@@ -146,18 +141,8 @@ eventos = macro(macroDelay, function()
 end)
 eventos.setOn(false)
 
--- Botão visual para ativar/desativar sistema
 addIcon("eventos", {outfit = outfit, text="EVENTOS"}, function(icon, isOn)
   eventos.setOn(isOn)
   clickup.setOn(isOn)
   icon.text:setText("Eventos")
 end)
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--------------------------------------------HORARIOS DOS EVENTOS SPARTACUS OT----------------------------------------------------------------------------------------------
-02:40, 05:40, 07:00, 08:40, 10:00, 11:40, 13:40, 15:00, 15:40, 17:00, 19:40, 22:40, 13:00, 18:00, 22:00   HORARIOS DOS EVENTOS
-
-03:20, 06:07, 07:20, 09:07, 10:20, 12:20, 14:07, 15:20, 16:07, 17:20, 20:20, 23:07, 13:12, 18:12, 22:12  HORARIOS DE SAIR DOS EVENTOS
-
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
