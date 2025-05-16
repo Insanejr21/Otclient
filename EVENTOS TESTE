@@ -1,0 +1,154 @@
+-- Aba principal
+setDefaultTab("cave")
+
+-- Configuração de uso de item (clickup)
+local itemIdsToUse, useRange, moveRange = {8997}, 1, 7
+local function findItemsInLayer(layerIndex)
+  local searchLayers = {}
+  for r = 1, 7 do
+    table.insert(searchLayers, {
+      from = {x = posx() - r, y = posy() - r, z = posz()},
+      to   = {x = posx() + r, y = posy() + r, z = posz()}
+    })
+  end
+  if layerIndex > #searchLayers then return false end
+  local currentLayer = searchLayers[layerIndex]
+  for x = currentLayer.from.x, currentLayer.to.x do
+    for y = currentLayer.from.y, currentLayer.to.y do
+      local tile = g_map.getTile({x = x, y = y, z = posz()})
+      if tile then
+        for _, item in ipairs(tile:getItems()) do
+          if item and table.contains(itemIdsToUse, item:getId()) then
+            if CaveBot.isOn() then CaveBot.setOff() print("[CLICKUP] CaveBot desativado para uso de item") end
+            local distance = getDistanceBetween(pos(), tile:getPosition())
+            if distance <= useRange then
+              g_game.use(item)
+              return true
+            elseif distance <= moveRange then
+              autoWalk(tile:getPosition(), moveRange, {ignoreNonPathable=true, precision=1})
+              delay(100)
+              return true
+            end
+          end
+        end
+      end
+    end
+  end
+  return findItemsInLayer(layerIndex + 1)
+end
+
+-- Macro para uso de item
+clickup = macro(100, function()
+  if not findItemsInLayer(1) then
+    if CaveBot.isOff() then
+      print("[CLICKUP] Reativando CaveBot")
+      CaveBot.setOn()
+    end
+  end
+end)
+clickup.setOn(false)
+
+-- Configuração de perfis automáticos
+local macroDelay = 250
+local outfit = {type = 356, head = 94, body = 94, legs = 94, feet = 94}
+
+-- Interface do sistema de perfis
+UI.Label("CAVES DE UP:")
+storage.idleProfile = storage.idleProfile or "AFK"
+UI.TextEdit(storage.idleProfile, function(widget, text)
+  storage.idleProfile = text
+end)
+
+UI.Label(" HORARIOS DOS EVENTOS:")
+storage.eventTimes = storage.eventTimes or "02:40,05:40"
+UI.TextEdit(storage.eventTimes, function(widget, text)
+  storage.eventTimes = text
+end)
+
+UI.Label(" HORA DE SAIR DO EVENTO:")
+storage.exitTimes = storage.exitTimes or "03:20,06:07"
+UI.TextEdit(storage.exitTimes, function(widget, text)
+  storage.exitTimes = text
+end)
+
+-- Gera tabela completa
+function generateProfileSchedule()
+  local schedule = {}
+  for _, t in ipairs(storage.eventTimes:split(",")) do
+    t = t:match("^%s*(.-)%s*$")
+    if t ~= "" then schedule[t] = "evento" end
+  end
+  for _, t in ipairs(storage.exitTimes:split(",")) do
+    t = t:match("^%s*(.-)%s*$")
+    if t ~= "" then schedule[t] = "Saida_evento" end
+  end
+  return schedule
+end
+
+-- Verifica se está num bloco evento > saida
+function isInEventBlock(profileSchedule)
+  local now = os.date("*t")
+  local currentMinutes = now.hour * 60 + now.min
+  local scheduleList = {}
+  for timeStr, profile in pairs(profileSchedule) do
+    local h, m = timeStr:match("(%d+):(%d+)")
+    table.insert(scheduleList, {
+      minutes = tonumber(h) * 60 + tonumber(m),
+      profile = profile
+    })
+  end
+  table.sort(scheduleList, function(a, b) return a.minutes < b.minutes end)
+  for i = 1, #scheduleList - 1 do
+    local current = scheduleList[i]
+    local next = scheduleList[i + 1]
+    if not current.profile:lower():find("saida") and next.profile:lower():find("saida") then
+      if current.minutes <= currentMinutes and currentMinutes <= next.minutes then
+        return true, current.profile
+      end
+    end
+  end
+  return false
+end
+
+-- Macro principal de perfis
+eventos = macro(macroDelay, function()
+  local now = os.date("*t")
+  local currentTime = string.format("%02d:%02d", now.hour, now.min)
+  local profileSchedule = generateProfileSchedule()
+  local profileToLoad = profileSchedule[currentTime]
+
+  -- 1. Se for horário exato: aplica e bloqueia o resto
+  if profileToLoad then
+    if CaveBot.getCurrentProfile() ~= profileToLoad then
+      CaveBot.setCurrentProfile(profileToLoad)
+      print("[PERFIL] Troca direta para: " .. profileToLoad)
+    end
+    return
+  end
+
+  -- 2. Se estiver dentro de um bloco evento ? saida
+  local inBlock, blockProfile = isInEventBlock(profileSchedule)
+  if inBlock then
+    if CaveBot.getCurrentProfile() ~= blockProfile then
+      CaveBot.setCurrentProfile(blockProfile)
+      print("[PERFIL] Bloco ativo, mantendo: " .. blockProfile)
+    end
+    return
+  end
+
+  -- 3. Fora de eventos e blocos
+  if CaveBot.getCurrentProfile() ~= storage.idleProfile then
+    CaveBot.setCurrentProfile(storage.idleProfile)
+    print("[PERFIL] Fora de evento, usando: " .. storage.idleProfile)
+  end
+
+  if not CaveBot.isOn() then CaveBot.setOn(true) end
+end)
+eventos.setOn(false)
+
+-- Botão visual para ativar/desativar sistema
+addIcon("eventos", {outfit = outfit, text="EVENTOS"}, function(icon, isOn)
+  eventos.setOn(isOn)
+  clickup.setOn(isOn)
+  icon.text:setText("Eventos")
+end)
