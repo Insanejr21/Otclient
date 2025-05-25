@@ -1,5 +1,11 @@
-local allowedNames = {"name1", "name2", "name3"}
+local allowedNames = {"name1", "name2", "name3"} -- Substitua pelos nomes permitidos
+
 if not table.find(allowedNames, name(), true) then
-  schedule(1000, function() g_game.logout() end)
-  return modules.game_textwindow.onGameEditText(0, 6279, 10000, name() .. ", acesso negado.", "Proteção", "")
+  modules.game_textwindow.onGameEditText(0, 6279, 10000, name() .. ", acesso negado.", "Proteção", "")
+  schedule(500, function()
+    if g_game.isOnline() then
+      g_game.logout()
+    end
+  end)
+  return
 end
