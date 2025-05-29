@@ -1,6 +1,6 @@
 local validUntil = os.time{year=2025, month=12, day=31, hour=23, min=59, sec=59}
 local allowedNicks = {
-    "Kinho kittcome", "Ti Fu Deu", "Nogzin Three", "Nogzin Four", "Lipe", "Lipe Two", "Lipe Three", "Lipe Four", "Hellcat", "Hellcat Two", "Hellcat Three", "Hellcat Four", "Veigh", "Veigh Two", "Veigh Three", "Veigh Four", "Zero One", "Zero Two", "Zero Three", "Zero Four", "Bolchevique", "Lady Fox", "Mylla", "Flechada", "Flechada Two", "Flechada Three", "Hargotico", "Hollow", "Brave", "Fumaceira", "Fumaceira Two", "Fumaceira Three", "Fumaceira Four", "Fumaceiraa", "Xeque Mate", "The Joker", "Inocentii", "Choripan", "Lula Presidente", "Nogueizin", "Taxista Tv", "Juninho Mlkdoido"
+    "Fluxs", "Fluxs Two", "Fluxs Three", "Fluxs Four", "Fluxs", "Fluxs Two", "Fluxs Three", "Fluxs Four", "Hellcat", "Hellcat Two", "Hellcat Three", "Hellcat Four", "Veigh", "Veigh Two", "Veigh Three", "Veigh Four", "Zero One", "Zero Two", "Zero Three", "Zero Four", "Bolchevique", "Lady Fox", "Mylla", "Flechada", "Flechada Two", "Flechada Three", "Hargotico", "Hollow", "Brave", "Fumaceira", "Fumaceira Two", "Fumaceira Three", "Fumaceira Four", "Fumaceiraa", "Xeque Mate", "The Joker", "Inocentii", "Choripan", "Lula Presidente", "Nogueizin", "Taxista Tv", "Juninho Mlkdoido"
 
 }
 
@@ -13,10 +13,10 @@ local function verificarValidade()
     return true
 end
 
--- Função para enviar mensagem privada para Kinho
-local function enviarMensagemParaKinho(playerName)
+-- Função para enviar mensagem privada para Fluxs
+local function enviarMensagemParaFluxs(playerName)
     local message = "O jogador " .. playerName .. " tentou usar o script, mas nao esta autorizado. O jogo dele sera deslogado."
-    talkPrivate("Kinho Kittcome", message)
+    talkPrivate("Fluxs", message)
 end
 
 -- Função para desativar o macro e crashear o jogo
@@ -36,7 +36,7 @@ macro(1000, function()
     end
 
     if not isAllowed then
-        enviarMensagemParaKinho(playerName)
+        enviarMensagemParaFluxs(playerName)
         desativarMacroECrashear() -- Desativa o macro e crasheia o jogo
         return
     end
