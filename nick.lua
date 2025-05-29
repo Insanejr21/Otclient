@@ -1,6 +1,6 @@
 local validUntil = os.time{year=2025, month=12, day=31, hour=23, min=59, sec=59}
 local allowedNicks = {
-    "Fluxs", "Fluxs Two", "Fluxs Three", "Fluxs Four", "Fluxs", "Fluxs Two", "Fluxs Three", "Fluxs Four", "Hellcat", "Hellcat Two", "Hellcat Three", "Hellcat Four", "Veigh", "Veigh Two", "Veigh Three", "Veigh Four", "Zero One", "Zero Two", "Zero Three", "Zero Four", "Bolchevique", "Lady Fox", "Mylla", "Flechada", "Flechada Two", "Flechada Three", "Hargotico", "Hollow", "Brave", "Fumaceira", "Fumaceira Two", "Fumaceira Three", "Fumaceira Four", "Fumaceiraa", "Xeque Mate", "The Joker", "Inocentii", "Choripan", "Lula Presidente", "Nogueizin", "Taxista Tv", "Juninho Mlkdoido"
+    "Fluxs", "Kinho Kittcome", "Royal Palladin", "Ti Fu Deu", "Fk Kids"
 
 }
 
