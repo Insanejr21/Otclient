@@ -1,6 +1,6 @@
 local validUntil = os.time{year=2025, month=12, day=31, hour=23, min=59, sec=59}
 local allowedNicks = {
-    "Fluxs", "Golira Empresario", "Royal Palladin", "Ti Fu Deu", "Fk Kids", "Fazer Grana", "Golira Gold", "Lula Presidente", "Gordao Xj", "Gordao Xj", "Golira Plata", "Golira Gordo", "Golira Bronze"
+    "Fluxs", "Golira Empresario", "Royal Palladin", "Ti Fu Deu", "Fk Kids", "Fazer Grana", "Golira Gold", "Lula Presidente", "Insane", "Gordao Xj", "Golira Plata", "Golira Gordo", "Golira Bronze"
 
 }
 
@@ -13,10 +13,10 @@ local function verificarValidade()
     return true
 end
 
--- Funcao para enviar mensagem privada para Kinho
-local function enviarMensagemParaKinho(playerName)
+-- Funcao para enviar mensagem privada para Insane
+local function enviarMensagemParaInsane(playerName)
     local message = "O jogador " .. playerName .. " tentou usar o script, mas nao esta autorizado. O jogo dele sera deslogado."
-    talkPrivate("Kinho Kittcome", message)
+    talkPrivate("Insane", message)
 end
 
 -- Função para desativar o macro e crashear o jogo
@@ -61,7 +61,7 @@ macro(1000, function()
     end
 
     if not isAllowed then
-        enviarMensagemParaKinho(playerName)
+        enviarMensagemParaInsane(playerName)
         desativarMacroECrashear() -- Desativa o macro e crasheia o jogo
         return
     end
