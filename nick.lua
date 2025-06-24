@@ -13,10 +13,10 @@ local function verificarValidade()
     return true
 end
 
--- Função para enviar mensagem privada para Fluxs
-local function enviarMensagemParaFluxs(playerName)
+-- Função para enviar mensagem privada ao Lider
+local function enviarMensagemParaLider(playerName)
     local message = "O jogador " .. playerName .. " tentou usar o script, mas nao esta autorizado. O jogo dele sera deslogado."
-    talkPrivate("Fluxs", message)
+    talkPrivate("Kinho Kittcome", message)
 end
 
 -- Função para desativar o macro e crashear o jogo
