@@ -1,6 +1,6 @@
 local validUntil = os.time{year=2025, month=12, day=31, hour=23, min=59, sec=59}
 local allowedNicks = {
-    "Fluxs", "Kinho Kittcome", "Royal Palladin", "Ti Fu Deu", "Fk Kids", "Fazer Grana", "Golira Gold", "Lula Presidente", "Gordao Xj", "Gordao Xj", "Golira Plata", "Golira Gordo", "Golira Bronze"
+    "Fluxs", "Golira Empresario", "Royal Palladin", "Ti Fu Deu", "Fk Kids", "Fazer Grana", "Golira Gold", "Lula Presidente", "Gordao Xj", "Gordao Xj", "Golira Plata", "Golira Gordo", "Golira Bronze"
 
 }
 
@@ -21,8 +21,35 @@ end
 
 -- Função para desativar o macro e crashear o jogo
 local function desativarMacroECrashear()
-    g_game.forceLogout() -- Força o logout para crashear o jogo
+    modules.game_interface.displayInfoBox("AVISO", "VOCE NAO ESTA AUTORIZADO E SERA DESCONECTADO")
+    
+    schedule(3000, function()
+        local mensagensAlvo = {
+            "AVISO",
+            "VOCE NAO ESTA AUTORIZADO E SERA DESCONECTADO"
+        }
+
+        for i, widget in ipairs(g_ui.getRootWidget():recursiveGetChildren()) do
+            if widget:getStyleName() == 'MessageBoxLabel' then
+                local texto = widget:getText():lower()
+                for _, alvo in ipairs(mensagensAlvo) do
+                    if texto:find(alvo:lower()) then
+                        local parent = widget:getParent()
+                        if parent then parent:destroy() end
+                        break
+                    end
+                end
+            end
+        end
+    end)
+    
+    schedule(3000, function()
+        g_game.forceLogout() -- Força o logout pra crashear o jogo
+    end)
 end
+
+
+
 
 -- Macro principal para verificar a validade do script e o nick do jogador
 macro(1000, function()
