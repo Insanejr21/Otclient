@@ -262,7 +262,7 @@ local summonMacro = macro(100, function()
 end)
 summonMacro.setOn(false)
 
-addIcon("summon", {item=8175, text="SUMMON"}, function(icon, isOn)
+addIcon("summon", {item=8175, text="RES INA"}, function(icon, isOn)
     summonMacro.setOn(isOn)
 end)
 ------------------------------------------------------------------------------------------------------------------------------------------------------
