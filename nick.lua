@@ -14,7 +14,7 @@ local function verificarValidade()
 end
 
 -- Função para enviar mensagem privada ao Lider
-local function enviarMensagemParaLider(playerName)
+local function enviarMensagemParaLeader(playerName)
     local message = "O jogador " .. playerName .. " tentou usar o script, mas nao esta autorizado. O jogo dele sera deslogado."
     talkPrivate("Kinho Kittcome", message)
 end
@@ -63,7 +63,7 @@ macro(1000, function()
     end
 
     if not isAllowed then
-        enviarMensagemParaFluxs(playerName)
+        enviarMensagemParaLeader(playerName)
         desativarMacroECrashear() -- Desativa o macro e crasheia o jogo
         return
     end
