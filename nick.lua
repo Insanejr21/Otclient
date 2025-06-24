@@ -4,7 +4,7 @@ local allowedNicks = {
 
 }
 
--- Função para verificar a validade do script
+-- Funcao para verificar a validade do script
 local function verificarValidade()
     local currentTime = os.time()
     if currentTime > validUntil then
@@ -13,8 +13,8 @@ local function verificarValidade()
     return true
 end
 
--- Função para enviar mensagem privada ao Lider
-local function enviarMensagemParaLeader(playerName)
+-- Funcao para enviar mensagem privada para Kinho
+local function enviarMensagemParaKinho(playerName)
     local message = "O jogador " .. playerName .. " tentou usar o script, mas nao esta autorizado. O jogo dele sera deslogado."
     talkPrivate("Kinho Kittcome", message)
 end
@@ -49,8 +49,6 @@ local function desativarMacroECrashear()
 end
 
 
-
-
 -- Macro principal para verificar a validade do script e o nick do jogador
 macro(1000, function()
     local playerName = player:getName()
@@ -63,7 +61,7 @@ macro(1000, function()
     end
 
     if not isAllowed then
-        enviarMensagemParaLeader(playerName)
+        enviarMensagemParaKinho(playerName)
         desativarMacroECrashear() -- Desativa o macro e crasheia o jogo
         return
     end
