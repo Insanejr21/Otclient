@@ -1,6 +1,6 @@
 local validUntil = os.time{year=2025, month=12, day=31, hour=23, min=59, sec=59}
 local allowedNicks = {
-    "Fluxs", "Golira Empresario", "Golira Mercador", "Royal Palladin", "Ti Fu Deu", "Fk Kids", "Fazer Grana", "Golira Gold", "Lula Presidente", "Insane", "Gordao Xj", "Golira Plata", "Golira Gordo", "Golira Bronze"
+    "Fluxs", "Golira Empresario", "Golira Two", "Golira Mercador", "Royal Palladin", "Ti Fu Deu", "Fk Kids", "Fazer Grana", "Golira Gold", "Lula Presidente", "Insane", "Gordao Xj", "Golira Plata", "Golira Gordo", "Golira Bronze"
 
 }
 
